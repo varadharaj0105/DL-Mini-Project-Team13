@@ -1,0 +1,14 @@
+torch>=2.1
+torchvision>=0.16
+timm>=1.0
+datasets
+imagehash
+scipy
+scikit-learn
+pandas
+numpy
+pillow
+matplotlib
+grad-cam
+pyyaml
+pytest

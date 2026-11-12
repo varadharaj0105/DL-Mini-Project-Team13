@@ -1,0 +1,21 @@
+# Every number in the paper comes from these settings. Seeds: PlantDoc ablation 42/43/44; all other runs 42.
+common:
+  optimizer: AdamW
+  lr: 5.0e-4
+  weight_decay: 0.05
+  schedule: one-cycle (10% warm-up)
+  batch_size: 64
+  input_size: 224
+  mixed_precision: true
+  loss: class-weighted cross-entropy, label smoothing 0.1
+datasets:
+  plantdoc: {images_resized_to_longest_side: 384, epochs: 12, classes: 27, split: "official test; 15% of train as val"}
+  paddy:    {images_resized_to_longest_side: 320, epochs: 8,  classes: 10, split: "pHash-grouped StratifiedGroupKFold (7 folds for test, 6 for val)"}
+models:
+  student: mobilenetv3_large_100
+  baselines: [mobilenetv3_large_100, mobilevit_s, efficientformer_l1]
+  teachers: {plantdoc: mobilevit_s, paddy: efficientformer_l1}
+distillation: {alpha: 0.5, temperature: 4.0, teacher_view: clean, student_view: distorted}
+field_aug: {crop_scale: [0.35, 1.0], rotation_deg: 25, color_jitter: [0.5, 0.5, 0.4, 0.0], blur_p: 0.3, erase_p: 0.5}
+variety_shift: {train_variety: ADT45, test: "all other varieties (3,415 images)", teacher: "retrained on ADT45 only"}
+mixstyle: {p: 0.5, beta_alpha: 0.1, layers: "MobileNetV3 stages 1 and 2"}
